@@ -3,10 +3,11 @@ import { levels, specialCards } from "@/data/gameData";
 
 interface GameState {
   currentLevel: number;
-  questionIndex: number; // index within current level
+  questionIndex: number;
   totalAnswered: number;
   favorites: number[];
-  globalCardCount: number; // for tracking special card intervals
+  globalCardCount: number;
+  sparks: number; // new spark/chemistry counter
 }
 
 const STORAGE_KEY = "rovad_game_state";
@@ -22,6 +23,7 @@ const getInitialState = (): GameState => {
     totalAnswered: 0,
     favorites: [],
     globalCardCount: 0,
+    sparks: 0,
   };
 };
 
@@ -30,6 +32,8 @@ export const useGameState = () => {
   const [direction, setDirection] = useState(1);
   const [showSpecial, setShowSpecial] = useState(false);
   const [specialIndex, setSpecialIndex] = useState(0);
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [unlockedLevel, setUnlockedLevel] = useState<number | null>(null);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -41,11 +45,11 @@ export const useGameState = () => {
 
   const advance = useCallback(() => {
     setDirection(1);
-    
+
     setState(prev => {
       const newGlobalCount = prev.globalCardCount + 1;
       const newTotalAnswered = prev.totalAnswered + 1;
-      
+
       // Check if next card should be special (every 7)
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
@@ -58,13 +62,22 @@ export const useGameState = () => {
       let nextLevel = prev.currentLevel;
 
       if (nextIndex >= level.questions.length) {
-        // Try to move to next level
         const nextLevelData = levels.find(l => l.id === prev.currentLevel + 1);
         if (nextLevelData && newTotalAnswered >= nextLevelData.unlockAt) {
           nextLevel = nextLevelData.id;
           nextIndex = 0;
+          setShowLevelUp(true);
+          setUnlockedLevel(nextLevelData.id);
         } else {
-          nextIndex = 0; // Loop back
+          nextIndex = 0;
+        }
+      }
+
+      // Check if a new level just got unlocked (even if we don't auto-switch)
+      for (const l of levels) {
+        if (l.unlockAt === newTotalAnswered && l.id > prev.currentLevel) {
+          setShowLevelUp(true);
+          setUnlockedLevel(l.id);
         }
       }
 
@@ -95,17 +108,23 @@ export const useGameState = () => {
   const favorite = useCallback(() => {
     if (showSpecial) {
       setShowSpecial(false);
-      setState(prev => ({
-        ...prev,
-        totalAnswered: prev.totalAnswered,
-      }));
-      advance();
+      setState(prev => ({ ...prev, sparks: prev.sparks + 1 }));
+      // After dismissing special, advance to next question
+      setTimeout(() => {
+        setState(prev => {
+          const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
+          let nextIndex = prev.questionIndex + 1;
+          if (nextIndex >= level.questions.length) nextIndex = 0;
+          return { ...prev, questionIndex: nextIndex };
+        });
+      }, 100);
       return;
     }
     if (currentQuestion) {
       setState(prev => ({
         ...prev,
         favorites: [...prev.favorites, currentQuestion.id],
+        sparks: prev.sparks + 1,
       }));
     }
     advance();
@@ -123,6 +142,11 @@ export const useGameState = () => {
     setShowSpecial(false);
   }, []);
 
+  const dismissLevelUp = useCallback(() => {
+    setShowLevelUp(false);
+    setUnlockedLevel(null);
+  }, []);
+
   const resetGame = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     setState({
@@ -131,6 +155,7 @@ export const useGameState = () => {
       totalAnswered: 0,
       favorites: [],
       globalCardCount: 0,
+      sparks: 0,
     });
     setShowSpecial(false);
     setSpecialIndex(0);
@@ -144,6 +169,8 @@ export const useGameState = () => {
     currentLevelData,
     currentSpecialCard,
     showSpecial,
+    showLevelUp,
+    unlockedLevel,
     direction,
     state,
     houseProgress,
@@ -152,6 +179,7 @@ export const useGameState = () => {
     favorite,
     selectLevel,
     dismissSpecial,
+    dismissLevelUp,
     resetGame,
   };
 };

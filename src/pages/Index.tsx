@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import GameCard from "@/components/GameCard";
 import HouseProgress from "@/components/HouseProgress";
 import LevelSelector from "@/components/LevelSelector";
+import LevelUpModal from "@/components/LevelUpModal";
 import { useGameState } from "@/hooks/useGameState";
 
 const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
@@ -31,8 +32,8 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
     >
       <p className="text-sm text-muted-foreground leading-relaxed">
         שלושה רבדים של שאלות שיובילו אתכם מגישוש קליל לשיחה עמוקה ומשמעותית.
-        <br />
-        <span className="text-accent font-semibold">❤️ לחצו לב</span> כדי לבנות את הבית המשותף שלכם.
+        <br /><br />
+        <span className="text-accent font-semibold">❤️ לחצו לב</span> כדי לבנות את הבית המשותף שלכם ולצבור ניצוצות.
       </p>
     </motion.div>
 
@@ -49,6 +50,18 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
   </motion.div>
 );
 
+const SparkCounter = ({ sparks }: { sparks: number }) => (
+  <motion.div
+    className="flex items-center gap-1.5 bg-secondary px-3 py-1.5 rounded-full"
+    key={sparks}
+    animate={sparks > 0 ? { scale: [1, 1.15, 1] } : undefined}
+    transition={{ duration: 0.3 }}
+  >
+    <span className="text-sm">✨</span>
+    <span className="text-xs font-bold text-foreground">{sparks}</span>
+  </motion.div>
+);
+
 const Index = () => {
   const [started, setStarted] = useState(false);
   const {
@@ -56,12 +69,15 @@ const Index = () => {
     currentLevelData,
     currentSpecialCard,
     showSpecial,
+    showLevelUp,
+    unlockedLevel,
     direction,
     state,
     houseProgress,
     skip,
     favorite,
     selectLevel,
+    dismissLevelUp,
     resetGame,
   } = useGameState();
 
@@ -80,12 +96,15 @@ const Index = () => {
             {/* Top bar */}
             <div className="flex items-start justify-between mb-4">
               <HouseProgress progress={houseProgress} />
-              <button
-                onClick={resetGame}
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors mt-2"
-              >
-                התחל מחדש
-              </button>
+              <div className="flex flex-col items-end gap-2 mt-1">
+                <SparkCounter sparks={state.sparks} />
+                <button
+                  onClick={resetGame}
+                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  התחל מחדש
+                </button>
+              </div>
             </div>
 
             {/* Level selector */}
@@ -101,8 +120,8 @@ const Index = () => {
             <div className="flex-1 flex items-center">
               {showSpecial && currentSpecialCard ? (
                 <GameCard
-                  key={`special-${currentSpecialCard.id}`}
-                  cardKey={`special-${currentSpecialCard.id}`}
+                  key={`special-${currentSpecialCard.id}-${state.globalCardCount}`}
+                  cardKey={`special-${currentSpecialCard.id}-${state.globalCardCount}`}
                   text={currentSpecialCard.text}
                   levelTitle="קלף זהב"
                   levelEmoji="✨"
@@ -135,12 +154,19 @@ const Index = () => {
             {/* Footer */}
             <div className="text-center py-4">
               <p className="text-[10px] text-muted-foreground">
-                {state.totalAnswered} שאלות נענו • {state.favorites.length} שמורות
+                {state.totalAnswered} שאלות נענו • {state.favorites.length} שמורות • ✨ {state.sparks} ניצוצות
               </p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Level up modal */}
+      <LevelUpModal
+        show={showLevelUp}
+        levelId={unlockedLevel}
+        onDismiss={dismissLevelUp}
+      />
     </div>
   );
 };
