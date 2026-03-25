@@ -34,7 +34,8 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="bg-card rounded-3xl p-10 max-w-xs w-full text-center card-shadow gold-border relative overflow-visible"
+            className="card-gradient rounded-[2rem] p-6 sm:p-10 max-w-[85vw] sm:max-w-xs w-full text-center card-shadow border border-white/80 relative overflow-visible"
+            style={{ boxShadow: "0 8px 48px hsla(260,55%,65%,0.22), 0 2px 16px rgba(0,0,0,0.06)" }}
             onClick={e => e.stopPropagation()}
           >
             {/* Sparkle particles */}
@@ -64,8 +65,13 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
               initial={{ rotate: -20, scale: 0 }}
               animate={{ rotate: 0, scale: 1 }}
               transition={{ delay: 0.15, type: "spring", stiffness: 400, damping: 15 }}
-              className="text-6xl mb-3"
+              className="relative inline-block text-5xl sm:text-6xl mb-3"
             >
+              <motion.span
+                className="absolute inset-0 rounded-full"
+                animate={{ boxShadow: ["0 0 0 0 hsla(260,55%,65%,0.4)", "0 0 0 20px hsla(260,55%,65%,0)", "0 0 0 0 hsla(260,55%,65%,0)"] }}
+                transition={{ duration: 1.6, delay: 0.4, repeat: 2 }}
+              />
               🎉
             </motion.div>
 
@@ -73,7 +79,7 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
-              className="text-2xl font-extrabold text-foreground mb-2"
+              className="text-xl sm:text-2xl font-extrabold text-foreground mb-2"
             >
               רובד חדש נפתח!
             </motion.h2>
@@ -82,7 +88,7 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
-              className="text-xl font-bold text-accent mb-1"
+              className="text-lg sm:text-xl font-bold text-accent mb-1"
             >
               {level.emoji} {level.title}
             </motion.p>
@@ -102,7 +108,7 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
               transition={{ delay: 0.55 }}
               whileTap={{ scale: 0.95 }}
               onClick={onDismiss}
-              className="px-10 py-3 rounded-full bg-primary text-primary-foreground font-bold card-shadow text-lg"
+              className="px-8 sm:px-10 py-3 rounded-full btn-primary-gradient text-white font-bold action-shadow text-base sm:text-lg"
             >
               יאללה! ✨
             </motion.button>

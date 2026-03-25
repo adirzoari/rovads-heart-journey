@@ -13,7 +13,7 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
-    className="min-h-screen flex flex-col items-center justify-center px-6 gap-8"
+    className="min-h-screen flex flex-col items-center justify-center px-5 sm:px-6 gap-6 sm:gap-8"
   >
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}
@@ -21,21 +21,30 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
       transition={{ delay: 0.2, type: "spring" }}
       className="text-center"
     >
-      <h1 className="text-5xl font-extrabold text-foreground mb-2">רובד</h1>
-      <div className="w-16 h-0.5 gold-shimmer mx-auto rounded-full mb-4" />
-      <p className="text-muted-foreground text-lg font-medium">משחק קלפים לחיבור אמיתי</p>
+      {/* Brand logo — two overlapping hearts */}
+      <div className="flex justify-center mb-4">
+        <svg width="72" height="64" viewBox="0 0 72 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 12C16 12 10 17.5 10 25.5C10 37 22 48 30 54C38 48 50 37 50 25.5C50 17.5 44 12 38 12C34 12 30.5 14 28 17C27 15 25 12 22 12Z"
+            fill="hsl(260,55%,68%)" opacity="0.85"/>
+          <path d="M34 18C28 18 22 23.5 22 31.5C22 43 34 54 42 60C50 54 62 43 62 31.5C62 23.5 56 18 50 18C46 18 42.5 20 40 23C39 21 37 18 34 18Z"
+            fill="hsl(24,90%,72%)" opacity="0.90"/>
+        </svg>
+      </div>
+      <h1 className="text-4xl sm:text-5xl font-extrabold mb-1" style={{ background: "linear-gradient(135deg, hsl(260,55%,58%) 0%, hsl(24,90%,65%) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>רובד</h1>
+      <div className="w-16 h-0.5 gold-shimmer mx-auto rounded-full mb-3" />
+      <p className="text-muted-foreground text-base font-medium">משחק קלפים לחיבור אמיתי</p>
     </motion.div>
 
     <motion.div
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.5 }}
-      className="bg-card rounded-2xl p-6 card-shadow max-w-xs text-center border border-border"
+      className="card-gradient rounded-3xl p-5 sm:p-6 card-shadow w-full max-w-xs text-center border border-white/70"
     >
       <p className="text-sm text-muted-foreground leading-relaxed">
         שלושה רבדים של שאלות שיובילו אתכם מגישוש קליל לשיחה עמוקה ומשמעותית.
         <br /><br />
-        <span className="text-accent font-semibold">❤️ לחצו לב</span> כדי לבנות את הבית המשותף שלכם ולצבור ניצוצות.
+        <span className="text-accent font-semibold">לחצו לב</span> כדי לבנות את הבית המשותף שלכם ולצבור ניצוצות.
       </p>
     </motion.div>
 
@@ -45,7 +54,7 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
       transition={{ delay: 0.7 }}
       whileTap={{ scale: 0.95 }}
       onClick={onStart}
-      className="px-10 py-4 rounded-full bg-primary text-primary-foreground font-bold text-lg card-shadow hover:opacity-90 transition-opacity"
+      className="px-10 sm:px-12 py-3.5 sm:py-4 rounded-full btn-primary-gradient text-white font-bold text-base sm:text-lg action-shadow hover:opacity-90 transition-opacity"
     >
       יוצאים לדרך ✨
     </motion.button>
@@ -55,7 +64,7 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
 const SparkCounter = ({ sparks, onClick }: { sparks: number; onClick: () => void }) => (
   <motion.button
     onClick={onClick}
-    className="flex items-center gap-1.5 bg-secondary px-3 py-1.5 rounded-full hover:bg-secondary/80 transition-colors cursor-pointer"
+    className="flex items-center gap-1.5 bg-white/70 backdrop-blur-sm border border-white/80 px-3 py-1.5 rounded-full card-shadow hover:bg-white/85 transition-all cursor-pointer"
     key={sparks}
     animate={sparks > 0 ? { scale: [1, 1.15, 1] } : undefined}
     transition={{ duration: 0.3 }}
@@ -93,7 +102,48 @@ const Index = () => {
   } = useGameState();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative">
+      {/* Ambient background orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+        <div
+          className="absolute rounded-full"
+          style={{
+            top: "-160px",
+            right: "-160px",
+            width: "520px",
+            height: "520px",
+            background: "radial-gradient(circle, hsla(260,55%,72%,0.42) 0%, transparent 70%)",
+            filter: "blur(80px)",
+            animation: "orb-float 12s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute rounded-full"
+          style={{
+            bottom: "-160px",
+            left: "-160px",
+            width: "520px",
+            height: "520px",
+            background: "radial-gradient(circle, hsla(24,90%,76%,0.38) 0%, transparent 70%)",
+            filter: "blur(80px)",
+            animation: "orb-float-reverse 10s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute rounded-full"
+          style={{
+            top: "40%",
+            left: "-80px",
+            width: "300px",
+            height: "300px",
+            background: "radial-gradient(circle, hsla(260,45%,76%,0.22) 0%, transparent 70%)",
+            filter: "blur(60px)",
+            animation: "orb-float 15s ease-in-out infinite 2s",
+          }}
+        />
+      </div>
+
+      <div className="relative" style={{ zIndex: 1 }}>
       <AnimatePresence mode="wait">
         {!started ? (
           <WelcomeScreen key="welcome" onStart={() => setStarted(true)} />
@@ -102,10 +152,10 @@ const Index = () => {
             key="game"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="min-h-screen flex flex-col px-4 py-6 max-w-lg mx-auto"
+            className="min-h-screen flex flex-col px-3 sm:px-4 py-4 sm:py-6 max-w-lg mx-auto"
           >
             {/* Top bar */}
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex items-start justify-between mb-3 sm:mb-4 card-gradient rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 card-shadow border border-white/70">
               <HouseProgress progress={houseProgress} />
               <div className="flex flex-col items-end gap-2 mt-1">
                 <SparkCounter sparks={state.sparks} onClick={() => setShowFavorites(true)} />
@@ -119,7 +169,7 @@ const Index = () => {
             </div>
 
             {/* Level selector */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <LevelSelector
                 currentLevel={state.currentLevel}
                 answeredPerLevel={state.answeredPerLevel}
@@ -184,6 +234,8 @@ const Index = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      </div>
 
       {/* Level up modal */}
       <LevelUpModal

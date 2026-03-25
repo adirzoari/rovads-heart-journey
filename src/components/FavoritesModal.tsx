@@ -29,7 +29,7 @@ const FavoritesModal = ({ show, favoriteIds, onDismiss }: FavoritesModalProps) =
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="bg-card rounded-3xl p-6 max-w-md w-full max-h-[80vh] flex flex-col card-shadow border border-border"
+            className="rounded-3xl p-6 max-w-md w-full max-h-[80vh] flex flex-col card-shadow border border-white/80 card-gradient"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -59,7 +59,7 @@ const FavoritesModal = ({ show, favoriteIds, onDismiss }: FavoritesModalProps) =
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-secondary/50 rounded-xl p-4 border border-border/50"
+                    className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/75"
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs font-semibold text-muted-foreground">
@@ -80,7 +80,7 @@ const FavoritesModal = ({ show, favoriteIds, onDismiss }: FavoritesModalProps) =
               transition={{ delay: 0.2 }}
               whileTap={{ scale: 0.95 }}
               onClick={onDismiss}
-              className="mt-4 px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold card-shadow w-full"
+              className="mt-4 px-6 py-2.5 rounded-full btn-primary-gradient text-white font-semibold action-shadow w-full"
             >
               סגור
             </motion.button>
