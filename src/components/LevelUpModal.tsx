@@ -13,7 +13,7 @@ const sparkles = Array.from({ length: 12 }, (_, i) => ({
   delay: i * 0.08,
   distance: 90 + Math.random() * 40,
   size: 6 + Math.random() * 8,
-  emoji: ["✨", "🌟", "💫", "⭐"][i % 4],
+  emoji: i % 2 === 0 ? "✨" : "💖",
 }));
 
 const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
@@ -34,8 +34,7 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="card-gradient rounded-[2rem] p-6 sm:p-10 max-w-[85vw] sm:max-w-xs w-full text-center card-shadow relative overflow-visible"
-            style={{ border: "1px solid rgba(196,148,148,0.38)", boxShadow: "0 8px 48px hsla(348,55%,65%,0.24), 0 2px 16px rgba(0,0,0,0.06)" }}
+            className="glass-card rounded-[2rem] p-6 sm:p-10 md:p-12 lg:p-14 max-w-[85vw] sm:max-w-xs md:max-w-sm lg:max-w-md w-full text-center card-shadow relative overflow-visible"
             onClick={e => e.stopPropagation()}
           >
             {/* Sparkle particles */}
@@ -65,11 +64,11 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
               initial={{ rotate: -20, scale: 0 }}
               animate={{ rotate: 0, scale: 1 }}
               transition={{ delay: 0.15, type: "spring", stiffness: 400, damping: 15 }}
-              className="relative inline-block text-5xl sm:text-6xl mb-3"
+              className="relative inline-block text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-3"
             >
               <motion.span
                 className="absolute inset-0 rounded-full"
-                animate={{ boxShadow: ["0 0 0 0 hsla(348,55%,65%,0.4)", "0 0 0 20px hsla(260,55%,65%,0)", "0 0 0 0 hsla(260,55%,65%,0)"] }}
+                animate={{ boxShadow: ["0 0 0 0 rgba(255,215,0,0.4)", "0 0 0 20px rgba(255,215,0,0)", "0 0 0 0 rgba(255,215,0,0)"] }}
                 transition={{ duration: 1.6, delay: 0.4, repeat: 2 }}
               />
               🎉
@@ -79,7 +78,7 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
-              className="text-xl sm:text-2xl font-extrabold text-foreground mb-2"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-foreground mb-2"
             >
               רובד חדש נפתח!
             </motion.h2>
@@ -88,7 +87,7 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
-              className="text-lg sm:text-xl font-bold text-accent mb-1"
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-1"
             >
               {level.emoji} {level.title}
             </motion.p>
@@ -97,7 +96,7 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.45 }}
-              className="text-sm text-muted-foreground mb-8"
+              className="text-sm sm:text-base md:text-lg text-muted-foreground mb-8"
             >
               המשיכו לצלול לעומק...
             </motion.p>
@@ -108,7 +107,7 @@ const LevelUpModal = ({ show, levelId, onDismiss }: LevelUpModalProps) => {
               transition={{ delay: 0.55 }}
               whileTap={{ scale: 0.95 }}
               onClick={onDismiss}
-              className="px-8 sm:px-10 py-3 rounded-full btn-primary-gradient text-white font-bold action-shadow text-base sm:text-lg"
+              className="px-8 sm:px-10 md:px-12 lg:px-14 py-3 md:py-4 rounded-full btn-primary-gradient text-foreground font-bold action-shadow text-base sm:text-lg md:text-xl"
             >
               יאללה! ✨
             </motion.button>
