@@ -15,40 +15,40 @@ const HouseProgress = ({ progress }: HouseProgressProps) => {
         {/* Roof */}
         <motion.polygon
           points="60,8 15,45 105,45"
-          fill={filledSegments >= 8 ? "hsl(260, 55%, 68%)" : "none"}
+          fill={filledSegments >= 8 ? "hsl(348, 55%, 65%)" : "none"}
           stroke="hsl(220, 15%, 22%)"
           strokeWidth="2"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1, fill: filledSegments >= 8 ? "hsl(260, 55%, 68%)" : "none" }}
+          animate={{ opacity: 1, fill: filledSegments >= 8 ? "hsl(348, 55%, 65%)" : "none" }}
           transition={{ duration: 0.5 }}
         />
         {/* Body segments - 2 columns x 3 rows + door + window */}
         {/* Left wall */}
         <motion.rect x="20" y="45" width="38" height="20" rx="1"
-          fill={filledSegments >= 1 ? "hsl(260, 55%, 68%)" : "none"}
+          fill={filledSegments >= 1 ? "hsl(348, 55%, 65%)" : "none"}
           stroke="hsl(220, 15%, 22%)" strokeWidth="1.5"
-          animate={{ fill: filledSegments >= 1 ? "hsl(260, 55%, 68%)" : "none" }}
+          animate={{ fill: filledSegments >= 1 ? "hsl(348, 55%, 65%)" : "none" }}
           transition={{ duration: 0.6 }}
         />
         {/* Right wall top */}
         <motion.rect x="62" y="45" width="38" height="20" rx="1"
-          fill={filledSegments >= 2 ? "hsl(260, 55%, 68%)" : "none"}
+          fill={filledSegments >= 2 ? "hsl(348, 55%, 65%)" : "none"}
           stroke="hsl(220, 15%, 22%)" strokeWidth="1.5"
-          animate={{ fill: filledSegments >= 2 ? "hsl(260, 55%, 68%)" : "none" }}
+          animate={{ fill: filledSegments >= 2 ? "hsl(348, 55%, 65%)" : "none" }}
           transition={{ duration: 0.6 }}
         />
         {/* Left wall bottom */}
         <motion.rect x="20" y="67" width="38" height="20" rx="1"
-          fill={filledSegments >= 3 ? "hsl(260, 55%, 68%)" : "none"}
+          fill={filledSegments >= 3 ? "hsl(348, 55%, 65%)" : "none"}
           stroke="hsl(220, 15%, 22%)" strokeWidth="1.5"
-          animate={{ fill: filledSegments >= 3 ? "hsl(260, 55%, 68%)" : "none" }}
+          animate={{ fill: filledSegments >= 3 ? "hsl(348, 55%, 65%)" : "none" }}
           transition={{ duration: 0.6 }}
         />
         {/* Right wall bottom */}
         <motion.rect x="62" y="67" width="38" height="20" rx="1"
-          fill={filledSegments >= 4 ? "hsl(260, 55%, 68%)" : "none"}
+          fill={filledSegments >= 4 ? "hsl(348, 55%, 65%)" : "none"}
           stroke="hsl(220, 15%, 22%)" strokeWidth="1.5"
-          animate={{ fill: filledSegments >= 4 ? "hsl(260, 55%, 68%)" : "none" }}
+          animate={{ fill: filledSegments >= 4 ? "hsl(348, 55%, 65%)" : "none" }}
           transition={{ duration: 0.6 }}
         />
         {/* Window left */}
@@ -67,9 +67,9 @@ const HouseProgress = ({ progress }: HouseProgressProps) => {
         />
         {/* Door */}
         <motion.rect x="50" y="70" width="20" height="18" rx="2"
-          fill={filledSegments >= 7 ? "hsl(260, 55%, 68%)" : "none"}
+          fill={filledSegments >= 7 ? "hsl(348, 55%, 65%)" : "none"}
           stroke="hsl(220, 15%, 22%)" strokeWidth="1.5"
-          animate={{ fill: filledSegments >= 7 ? "hsl(260, 55%, 68%)" : "none" }}
+          animate={{ fill: filledSegments >= 7 ? "hsl(348, 55%, 65%)" : "none" }}
           transition={{ duration: 0.6 }}
         />
         {/* Door knob */}

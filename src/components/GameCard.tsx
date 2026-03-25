@@ -71,23 +71,29 @@ const GameCard = ({
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.7}
           onDragEnd={handleDragEnd}
-          style={{ touchAction: "none" }}
+          style={{
+            touchAction: "none",
+            ...(isSpecial ? {} : { border: "1px solid rgba(196, 148, 148, 0.32)" }),
+          }}
           className={`
             relative rounded-3xl p-5 sm:p-8 min-h-[300px] sm:min-h-[380px] flex flex-col justify-between cursor-grab active:cursor-grabbing
             card-shadow
             ${isSpecial
               ? 'gold-border special-card-gradient'
-              : 'card-gradient border border-white/75'
+              : 'card-gradient'
             }
           `}
         >
           {/* Header */}
           <div className="flex items-center justify-between">
-            <span className={`text-[11px] font-bold tracking-wide px-2.5 py-1 rounded-full ${isSpecial ? 'bg-accent/15 text-accent' : 'bg-white/60 border border-white/70 text-foreground/70'}`}>
+            <span
+              className={`text-[11px] font-bold tracking-wide px-2.5 py-1 rounded-full ${isSpecial ? 'bg-accent/12 text-accent' : 'bg-white/80 text-foreground/65'}`}
+              style={isSpecial ? {} : { border: "1px solid rgba(196, 148, 148, 0.35)" }}
+            >
               {isSpecial ? "✨ קלף זהב" : `${levelEmoji} ${levelTitle}`}
             </span>
             {!isSpecial && (
-              <span className="text-[11px] font-medium text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full">
+              <span className="text-[11px] font-medium text-muted-foreground bg-white/70 px-2.5 py-1 rounded-full" style={{ border: "1px solid rgba(196, 148, 148, 0.28)" }}>
                 {cardNumber}/{totalInLevel}
               </span>
             )}
@@ -106,9 +112,9 @@ const GameCard = ({
               className="absolute inset-0 rounded-3xl pointer-events-none"
               animate={{
                 boxShadow: [
-                  "0 0 20px hsla(260, 55%, 65%, 0.20)",
-                  "0 0 44px hsla(260, 55%, 65%, 0.38)",
-                  "0 0 20px hsla(260, 55%, 65%, 0.20)",
+                  "0 0 22px hsla(348, 55%, 65%, 0.24)",
+                  "0 0 48px hsla(348, 55%, 65%, 0.46)",
+                  "0 0 22px hsla(348, 55%, 65%, 0.24)",
                 ],
               }}
               transition={{ duration: 2.2, repeat: Infinity }}
@@ -130,11 +136,12 @@ const GameCard = ({
             whileTap={canGoBack ? { scale: 0.9 } : undefined}
             onClick={onBack}
             disabled={!canGoBack}
-            className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full border flex items-center justify-center transition-all ${
+            className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all ${
               canGoBack
-                ? 'border-white/80 bg-white/70 backdrop-blur-sm card-shadow hover:bg-white/90 cursor-pointer'
-                : 'border-white/40 bg-white/40 backdrop-blur-sm cursor-not-allowed opacity-40'
+                ? 'bg-white/80 backdrop-blur-sm card-shadow hover:bg-white/95 cursor-pointer'
+                : 'bg-white/50 backdrop-blur-sm cursor-not-allowed opacity-40'
             }`}
+            style={{ border: canGoBack ? "1px solid rgba(196, 148, 148, 0.38)" : "1px solid rgba(196, 148, 148, 0.18)" }}
             aria-label="חזור אחורה"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-foreground/70 sm:w-[22px] sm:h-[22px]">
@@ -175,7 +182,8 @@ const GameCard = ({
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onSkip}
-            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-white/80 bg-white/70 backdrop-blur-sm flex items-center justify-center card-shadow hover:bg-white/90 transition-all"
+            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center card-shadow hover:bg-white/95 transition-all"
+            style={{ border: "1px solid rgba(196, 148, 148, 0.38)" }}
             aria-label="דלג על השאלה"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-foreground/70 sm:w-[22px] sm:h-[22px]">
