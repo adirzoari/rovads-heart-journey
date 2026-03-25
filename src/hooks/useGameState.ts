@@ -15,7 +15,17 @@ const STORAGE_KEY = "rovad_game_state";
 const getInitialState = (): GameState => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        currentLevel: parsed.currentLevel ?? 1,
+        questionIndex: parsed.questionIndex ?? 0,
+        totalAnswered: parsed.totalAnswered ?? 0,
+        favorites: parsed.favorites ?? [],
+        globalCardCount: parsed.globalCardCount ?? 0,
+        sparks: parsed.sparks ?? 0,
+      };
+    }
   } catch {}
   return {
     currentLevel: 1,
@@ -95,13 +105,29 @@ export const useGameState = () => {
     setDirection(-1);
     if (showSpecial) {
       setShowSpecial(false);
+      // After dismissing special, move to next question
+      setState(prev => {
+        const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
+        let nextIndex = prev.questionIndex + 1;
+        if (nextIndex >= level.questions.length) nextIndex = 0;
+        return { ...prev, questionIndex: nextIndex };
+      });
       return;
     }
     setState(prev => {
+      const newGlobalCount = prev.globalCardCount + 1;
       const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
       let nextIndex = prev.questionIndex + 1;
       if (nextIndex >= level.questions.length) nextIndex = 0;
-      return { ...prev, questionIndex: nextIndex, globalCardCount: prev.globalCardCount + 1 };
+
+      // Check if next card should be special (every 7)
+      if (newGlobalCount % 7 === 0) {
+        setShowSpecial(true);
+        setSpecialIndex(i => i + 1);
+        return { ...prev, globalCardCount: newGlobalCount };
+      }
+
+      return { ...prev, questionIndex: nextIndex, globalCardCount: newGlobalCount };
     });
   }, [showSpecial]);
 
