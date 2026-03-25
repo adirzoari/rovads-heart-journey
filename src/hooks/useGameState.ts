@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { levels, specialCards } from "@/data/gameData";
+import { getRandomDilemma } from "@/components/WouldYouRather";
 
 interface GameState {
   currentLevel: number;
@@ -44,6 +45,8 @@ export const useGameState = () => {
   const [specialIndex, setSpecialIndex] = useState(0);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [unlockedLevel, setUnlockedLevel] = useState<number | null>(null);
+  const [showWYR, setShowWYR] = useState(false);
+  const [wyrDilemma, setWyrDilemma] = useState(getRandomDilemma());
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -64,6 +67,13 @@ export const useGameState = () => {
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
         setSpecialIndex(i => i + 1);
+        return { ...prev, totalAnswered: newTotalAnswered, globalCardCount: newGlobalCount };
+      }
+
+      // Check if "would you rather" (every 12)
+      if (newGlobalCount % 12 === 0) {
+        setWyrDilemma(getRandomDilemma());
+        setShowWYR(true);
         return { ...prev, totalAnswered: newTotalAnswered, globalCardCount: newGlobalCount };
       }
 
@@ -124,6 +134,13 @@ export const useGameState = () => {
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
         setSpecialIndex(i => i + 1);
+        return { ...prev, globalCardCount: newGlobalCount };
+      }
+
+      // Check for WYR (every 12)
+      if (newGlobalCount % 12 === 0) {
+        setWyrDilemma(getRandomDilemma());
+        setShowWYR(true);
         return { ...prev, globalCardCount: newGlobalCount };
       }
 
