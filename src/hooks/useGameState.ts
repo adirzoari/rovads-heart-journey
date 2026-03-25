@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { levels, specialCards } from "@/data/gameData";
+import { getRandomDilemma } from "@/components/WouldYouRather";
 
 interface GameState {
   currentLevel: number;
@@ -15,7 +16,17 @@ const STORAGE_KEY = "rovad_game_state";
 const getInitialState = (): GameState => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        currentLevel: parsed.currentLevel ?? 1,
+        questionIndex: parsed.questionIndex ?? 0,
+        totalAnswered: parsed.totalAnswered ?? 0,
+        favorites: parsed.favorites ?? [],
+        globalCardCount: parsed.globalCardCount ?? 0,
+        sparks: parsed.sparks ?? 0,
+      };
+    }
   } catch {}
   return {
     currentLevel: 1,
@@ -34,6 +45,8 @@ export const useGameState = () => {
   const [specialIndex, setSpecialIndex] = useState(0);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [unlockedLevel, setUnlockedLevel] = useState<number | null>(null);
+  const [showWYR, setShowWYR] = useState(false);
+  const [wyrDilemma, setWyrDilemma] = useState(getRandomDilemma());
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -54,6 +67,13 @@ export const useGameState = () => {
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
         setSpecialIndex(i => i + 1);
+        return { ...prev, totalAnswered: newTotalAnswered, globalCardCount: newGlobalCount };
+      }
+
+      // Check if "would you rather" (every 12)
+      if (newGlobalCount % 12 === 0) {
+        setWyrDilemma(getRandomDilemma());
+        setShowWYR(true);
         return { ...prev, totalAnswered: newTotalAnswered, globalCardCount: newGlobalCount };
       }
 
@@ -93,17 +113,40 @@ export const useGameState = () => {
 
   const skip = useCallback(() => {
     setDirection(-1);
-    if (showSpecial) {
+    if (showSpecial || showWYR) {
       setShowSpecial(false);
+      setShowWYR(false);
+      setState(prev => {
+        const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
+        let nextIndex = prev.questionIndex + 1;
+        if (nextIndex >= level.questions.length) nextIndex = 0;
+        return { ...prev, questionIndex: nextIndex };
+      });
       return;
     }
     setState(prev => {
+      const newGlobalCount = prev.globalCardCount + 1;
       const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
       let nextIndex = prev.questionIndex + 1;
       if (nextIndex >= level.questions.length) nextIndex = 0;
-      return { ...prev, questionIndex: nextIndex, globalCardCount: prev.globalCardCount + 1 };
+
+      // Check if next card should be special (every 7)
+      if (newGlobalCount % 7 === 0) {
+        setShowSpecial(true);
+        setSpecialIndex(i => i + 1);
+        return { ...prev, globalCardCount: newGlobalCount };
+      }
+
+      // Check for WYR (every 12, but not on 7 multiples)
+      if (newGlobalCount % 12 === 0) {
+        setWyrDilemma(getRandomDilemma());
+        setShowWYR(true);
+        return { ...prev, globalCardCount: newGlobalCount };
+      }
+
+      return { ...prev, questionIndex: nextIndex, globalCardCount: newGlobalCount };
     });
-  }, [showSpecial]);
+  }, [showSpecial, showWYR]);
 
   const favorite = useCallback(() => {
     if (showSpecial) {
@@ -142,6 +185,33 @@ export const useGameState = () => {
     setShowSpecial(false);
   }, []);
 
+  const handleWYRPick = useCallback(() => {
+    setShowWYR(false);
+    setState(prev => ({
+      ...prev,
+      sparks: prev.sparks + 1,
+    }));
+    // advance to next question
+    setTimeout(() => {
+      setState(prev => {
+        const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
+        let nextIndex = prev.questionIndex + 1;
+        if (nextIndex >= level.questions.length) nextIndex = 0;
+        return { ...prev, questionIndex: nextIndex };
+      });
+    }, 100);
+  }, []);
+
+  const dismissWYR = useCallback(() => {
+    setShowWYR(false);
+    setState(prev => {
+      const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
+      let nextIndex = prev.questionIndex + 1;
+      if (nextIndex >= level.questions.length) nextIndex = 0;
+      return { ...prev, questionIndex: nextIndex };
+    });
+  }, []);
+
   const dismissLevelUp = useCallback(() => {
     setShowLevelUp(false);
     setUnlockedLevel(null);
@@ -171,6 +241,8 @@ export const useGameState = () => {
     showSpecial,
     showLevelUp,
     unlockedLevel,
+    showWYR,
+    wyrDilemma,
     direction,
     state,
     houseProgress,
@@ -180,6 +252,8 @@ export const useGameState = () => {
     selectLevel,
     dismissSpecial,
     dismissLevelUp,
+    handleWYRPick,
+    dismissWYR,
     resetGame,
   };
 };
