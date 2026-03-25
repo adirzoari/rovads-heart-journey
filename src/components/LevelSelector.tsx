@@ -24,12 +24,12 @@ const LevelSelector = ({ currentLevel, answeredPerLevel, onSelectLevel }: LevelS
             onClick={() => !isLocked && onSelectLevel(level.id)}
             disabled={isLocked}
             className={`
-              px-4 py-2 rounded-full text-xs font-semibold transition-all
+              px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-semibold transition-all
               ${isActive
-                ? 'bg-primary text-primary-foreground shadow-md'
+                ? 'bg-accent text-white shadow-md action-shadow'
                 : isLocked
-                  ? 'bg-muted text-muted-foreground opacity-50 cursor-not-allowed'
-                  : 'bg-secondary text-secondary-foreground hover:bg-accent'
+                  ? 'bg-white/40 backdrop-blur-sm border border-white/50 text-muted-foreground opacity-50 cursor-not-allowed'
+                  : 'bg-white/65 backdrop-blur-sm border border-white/75 text-foreground/80 hover:bg-white/85 hover:shadow-sm card-shadow'
               }
             `}
           >
