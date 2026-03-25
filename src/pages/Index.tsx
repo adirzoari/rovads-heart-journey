@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import GameCard from "@/components/GameCard";
+import WouldYouRather from "@/components/WouldYouRather";
 import HouseProgress from "@/components/HouseProgress";
 import LevelSelector from "@/components/LevelSelector";
 import LevelUpModal from "@/components/LevelUpModal";
@@ -71,6 +72,8 @@ const Index = () => {
     showSpecial,
     showLevelUp,
     unlockedLevel,
+    showWYR,
+    wyrDilemma,
     direction,
     state,
     houseProgress,
@@ -78,6 +81,8 @@ const Index = () => {
     favorite,
     selectLevel,
     dismissLevelUp,
+    handleWYRPick,
+    dismissWYR,
     resetGame,
   } = useGameState();
 
