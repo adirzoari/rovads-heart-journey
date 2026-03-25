@@ -122,7 +122,7 @@ const Index = () => {
             <div className="mb-6">
               <LevelSelector
                 currentLevel={state.currentLevel}
-                totalAnswered={state.totalAnswered}
+                answeredPerLevel={state.answeredPerLevel}
                 onSelectLevel={selectLevel}
               />
             </div>

@@ -31,7 +31,9 @@ const GameCard = ({
 }: GameCardProps) => {
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
-    if (Math.abs(info.offset.x) > 100) {
+    if (info.offset.x < -100 && canGoBack) {
+      onBack?.();
+    } else if (info.offset.x > 100) {
       onSkip();
     }
   };
@@ -114,7 +116,7 @@ const GameCard = ({
 
           {/* Swipe hint */}
           <p className="text-center text-[10px] text-muted-foreground mt-2">
-            החליקו לצדדים לדלג
+            החליקו שמאלה לחזור | ימינה לדלג
           </p>
         </motion.div>
       </AnimatePresence>

@@ -3,15 +3,18 @@ import { levels } from "@/data/gameData";
 
 interface LevelSelectorProps {
   currentLevel: number;
-  totalAnswered: number;
+  answeredPerLevel: Record<number, number>;
   onSelectLevel: (levelId: number) => void;
 }
 
-const LevelSelector = ({ currentLevel, totalAnswered, onSelectLevel }: LevelSelectorProps) => {
+const LevelSelector = ({ currentLevel, answeredPerLevel, onSelectLevel }: LevelSelectorProps) => {
   return (
     <div className="flex gap-2 justify-center">
       {levels.map((level) => {
-        const isLocked = totalAnswered < level.unlockAt && currentLevel < level.id;
+        const prevLevel = levels.find(pl => pl.id === level.id - 1);
+        const isLocked = level.unlockPercent > 0 && prevLevel !== undefined &&
+          (answeredPerLevel[prevLevel.id] || 0) < Math.ceil(prevLevel.questions.length * level.unlockPercent / 100) &&
+          currentLevel < level.id;
         const isActive = currentLevel === level.id;
 
         return (

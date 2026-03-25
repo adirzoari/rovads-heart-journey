@@ -15,6 +15,8 @@ interface GameState {
   globalCardCount: number;
   sparks: number;
   history: HistoryEntry[];
+  answeredPerLevel: Record<number, number>;
+  specialIndex: number;
 }
 
 const STORAGE_KEY = "rovad_game_state";
@@ -32,6 +34,8 @@ const getInitialState = (): GameState => {
         globalCardCount: parsed.globalCardCount ?? 0,
         sparks: parsed.sparks ?? 0,
         history: parsed.history ?? [],
+        answeredPerLevel: parsed.answeredPerLevel ?? {},
+        specialIndex: parsed.specialIndex ?? 0,
       };
     }
   } catch {}
@@ -43,6 +47,8 @@ const getInitialState = (): GameState => {
     globalCardCount: 0,
     sparks: 0,
     history: [],
+    answeredPerLevel: {},
+    specialIndex: 0,
   };
 };
 
@@ -70,7 +76,6 @@ export const useGameState = () => {
   const [state, setState] = useState<GameState>(getInitialState);
   const [direction, setDirection] = useState(1);
   const [showSpecial, setShowSpecial] = useState(false);
-  const [specialIndex, setSpecialIndex] = useState(0);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [unlockedLevel, setUnlockedLevel] = useState<number | null>(null);
   const [showWYR, setShowWYR] = useState(false);
@@ -82,7 +87,7 @@ export const useGameState = () => {
 
   const currentLevelData = levels.find(l => l.id === state.currentLevel) || levels[0];
   const currentQuestion = currentLevelData.questions[state.questionIndex];
-  const currentSpecialCard = specialCards[specialIndex % specialCards.length];
+  const currentSpecialCard = specialCards[state.specialIndex % specialCards.length];
 
   const triggerLevelUp = useCallback((levelId: number) => {
     setShowLevelUp(true);
@@ -109,15 +114,20 @@ export const useGameState = () => {
       const newHistory = pushHistory(prev);
       const newGlobalCount = prev.globalCardCount + 1;
       const newTotalAnswered = prev.totalAnswered + 1;
+      const newAnsweredPerLevel = {
+        ...prev.answeredPerLevel,
+        [prev.currentLevel]: (prev.answeredPerLevel[prev.currentLevel] || 0) + 1,
+      };
 
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
-        setSpecialIndex(i => i + 1);
         return {
           ...prev,
           totalAnswered: newTotalAnswered,
           globalCardCount: newGlobalCount,
           history: newHistory,
+          answeredPerLevel: newAnsweredPerLevel,
+          specialIndex: prev.specialIndex + 1,
         };
       }
 
@@ -129,6 +139,7 @@ export const useGameState = () => {
           totalAnswered: newTotalAnswered,
           globalCardCount: newGlobalCount,
           history: newHistory,
+          answeredPerLevel: newAnsweredPerLevel,
         };
       }
 
@@ -138,8 +149,16 @@ export const useGameState = () => {
       }
 
       for (const l of levels) {
-        if (l.unlockAt === newTotalAnswered && l.id > nextLevel) {
-          triggerLevelUp(l.id);
+        if (l.unlockPercent > 0) {
+          const prevLevelData = levels.find(pl => pl.id === l.id - 1);
+          if (prevLevelData) {
+            const threshold = Math.ceil(prevLevelData.questions.length * l.unlockPercent / 100);
+            const prevAnswered = prev.answeredPerLevel[prevLevelData.id] || 0;
+            const newAnswered = newAnsweredPerLevel[prevLevelData.id] || 0;
+            if (prevAnswered < threshold && newAnswered >= threshold && l.id > nextLevel) {
+              triggerLevelUp(l.id);
+            }
+          }
         }
       }
 
@@ -150,6 +169,7 @@ export const useGameState = () => {
         totalAnswered: newTotalAnswered,
         globalCardCount: newGlobalCount,
         history: newHistory,
+        answeredPerLevel: newAnsweredPerLevel,
       };
     });
   }, [triggerLevelUp]);
@@ -177,13 +197,13 @@ export const useGameState = () => {
 
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
-        setSpecialIndex(i => i + 1);
         return {
           ...prev,
           globalCardCount: newGlobalCount,
           questionIndex: nextIndex,
           currentLevel: nextLevel,
           history: newHistory,
+          specialIndex: prev.specialIndex + 1,
         };
       }
 
@@ -295,9 +315,10 @@ export const useGameState = () => {
       globalCardCount: 0,
       sparks: 0,
       history: [],
+      answeredPerLevel: {},
+      specialIndex: 0,
     });
     setShowSpecial(false);
-    setSpecialIndex(0);
   }, []);
 
   const totalQuestions = levels.reduce((sum, l) => sum + l.questions.length, 0);
