@@ -6,7 +6,8 @@
       "Read(//usr/local/bin/**)",
       "Read(//Users/adir.zoari/.local/share/bun/bin/**)",
       "Bash(command -v npx)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

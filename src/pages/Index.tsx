@@ -25,12 +25,12 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
       <div className="flex justify-center mb-4">
         <svg width="72" height="64" viewBox="0 0 72 64" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M22 12C16 12 10 17.5 10 25.5C10 37 22 48 30 54C38 48 50 37 50 25.5C50 17.5 44 12 38 12C34 12 30.5 14 28 17C27 15 25 12 22 12Z"
-            fill="hsl(260,55%,68%)" opacity="0.85"/>
+            fill="hsl(348,55%,65%)" opacity="0.88"/>
           <path d="M34 18C28 18 22 23.5 22 31.5C22 43 34 54 42 60C50 54 62 43 62 31.5C62 23.5 56 18 50 18C46 18 42.5 20 40 23C39 21 37 18 34 18Z"
-            fill="hsl(24,90%,72%)" opacity="0.90"/>
+            fill="hsl(22,85%,72%)" opacity="0.92"/>
         </svg>
       </div>
-      <h1 className="text-4xl sm:text-5xl font-extrabold mb-1" style={{ background: "linear-gradient(135deg, hsl(260,55%,58%) 0%, hsl(24,90%,65%) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>רובד</h1>
+      <h1 className="text-4xl sm:text-5xl font-extrabold mb-1" style={{ background: "linear-gradient(135deg, hsl(348,55%,58%) 0%, hsl(38,68%,62%) 50%, hsl(22,85%,65%) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>רובד</h1>
       <div className="w-16 h-0.5 gold-shimmer mx-auto rounded-full mb-3" />
       <p className="text-muted-foreground text-base font-medium">משחק קלפים לחיבור אמיתי</p>
     </motion.div>
@@ -39,7 +39,8 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.5 }}
-      className="card-gradient rounded-3xl p-5 sm:p-6 card-shadow w-full max-w-xs text-center border border-white/70"
+      className="card-gradient rounded-3xl p-5 sm:p-6 card-shadow w-full max-w-xs text-center"
+      style={{ border: "1px solid rgba(196, 148, 148, 0.30)" }}
     >
       <p className="text-sm text-muted-foreground leading-relaxed">
         שלושה רבדים של שאלות שיובילו אתכם מגישוש קליל לשיחה עמוקה ומשמעותית.
@@ -64,7 +65,8 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
 const SparkCounter = ({ sparks, onClick }: { sparks: number; onClick: () => void }) => (
   <motion.button
     onClick={onClick}
-    className="flex items-center gap-1.5 bg-white/70 backdrop-blur-sm border border-white/80 px-3 py-1.5 rounded-full card-shadow hover:bg-white/85 transition-all cursor-pointer"
+    className="flex items-center gap-1.5 bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full card-shadow hover:bg-white/95 transition-all cursor-pointer"
+    style={{ border: "1px solid rgba(196, 148, 148, 0.38)" }}
     key={sparks}
     animate={sparks > 0 ? { scale: [1, 1.15, 1] } : undefined}
     transition={{ duration: 0.3 }}
@@ -105,40 +107,56 @@ const Index = () => {
     <div className="min-h-screen relative">
       {/* Ambient background orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+        {/* Rose gold — top right */}
         <div
           className="absolute rounded-full"
           style={{
-            top: "-160px",
-            right: "-160px",
-            width: "520px",
-            height: "520px",
-            background: "radial-gradient(circle, hsla(260,55%,72%,0.42) 0%, transparent 70%)",
-            filter: "blur(80px)",
+            top: "-180px",
+            right: "-180px",
+            width: "580px",
+            height: "580px",
+            background: "radial-gradient(circle, hsla(348,65%,72%,0.46) 0%, hsla(348,55%,72%,0.18) 55%, transparent 72%)",
+            filter: "blur(70px)",
             animation: "orb-float 12s ease-in-out infinite",
           }}
         />
+        {/* Peach — bottom left */}
         <div
           className="absolute rounded-full"
           style={{
             bottom: "-160px",
             left: "-160px",
-            width: "520px",
-            height: "520px",
-            background: "radial-gradient(circle, hsla(24,90%,76%,0.38) 0%, transparent 70%)",
-            filter: "blur(80px)",
+            width: "540px",
+            height: "540px",
+            background: "radial-gradient(circle, hsla(22,85%,74%,0.40) 0%, hsla(22,75%,78%,0.16) 55%, transparent 72%)",
+            filter: "blur(70px)",
             animation: "orb-float-reverse 10s ease-in-out infinite",
           }}
         />
+        {/* Champagne — center left */}
         <div
           className="absolute rounded-full"
           style={{
-            top: "40%",
-            left: "-80px",
-            width: "300px",
-            height: "300px",
-            background: "radial-gradient(circle, hsla(260,45%,76%,0.22) 0%, transparent 70%)",
+            top: "38%",
+            left: "-100px",
+            width: "340px",
+            height: "340px",
+            background: "radial-gradient(circle, hsla(38,68%,76%,0.30) 0%, transparent 70%)",
             filter: "blur(60px)",
             animation: "orb-float 15s ease-in-out infinite 2s",
+          }}
+        />
+        {/* Soft rose — top left */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            top: "20%",
+            right: "-60px",
+            width: "240px",
+            height: "240px",
+            background: "radial-gradient(circle, hsla(348,50%,80%,0.22) 0%, transparent 70%)",
+            filter: "blur(50px)",
+            animation: "orb-float-reverse 18s ease-in-out infinite 4s",
           }}
         />
       </div>
@@ -155,7 +173,7 @@ const Index = () => {
             className="min-h-screen flex flex-col px-3 sm:px-4 py-4 sm:py-6 max-w-lg mx-auto"
           >
             {/* Top bar */}
-            <div className="flex items-start justify-between mb-3 sm:mb-4 card-gradient rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 card-shadow border border-white/70">
+            <div className="flex items-start justify-between mb-3 sm:mb-4 card-gradient rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 card-shadow" style={{ border: "1px solid rgba(196, 148, 148, 0.28)" }}>
               <HouseProgress progress={houseProgress} />
               <div className="flex flex-col items-end gap-2 mt-1">
                 <SparkCounter sparks={state.sparks} onClick={() => setShowFavorites(true)} />

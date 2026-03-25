@@ -29,7 +29,8 @@ const FavoritesModal = ({ show, favoriteIds, onDismiss }: FavoritesModalProps) =
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="rounded-3xl p-6 max-w-md w-full max-h-[80vh] flex flex-col card-shadow border border-white/80 card-gradient"
+            className="rounded-3xl p-6 max-w-md w-full max-h-[80vh] flex flex-col card-shadow card-gradient"
+            style={{ border: "1px solid rgba(196,148,148,0.36)" }}
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -59,7 +60,8 @@ const FavoritesModal = ({ show, favoriteIds, onDismiss }: FavoritesModalProps) =
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/75"
+                    className="bg-white/80 backdrop-blur-sm rounded-xl p-4"
+                    style={{ border: "1px solid rgba(196,148,148,0.28)" }}
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs font-semibold text-muted-foreground">

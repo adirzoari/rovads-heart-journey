@@ -28,10 +28,15 @@ const LevelSelector = ({ currentLevel, answeredPerLevel, onSelectLevel }: LevelS
               ${isActive
                 ? 'bg-accent text-white shadow-md action-shadow'
                 : isLocked
-                  ? 'bg-white/40 backdrop-blur-sm border border-white/50 text-muted-foreground opacity-50 cursor-not-allowed'
-                  : 'bg-white/65 backdrop-blur-sm border border-white/75 text-foreground/80 hover:bg-white/85 hover:shadow-sm card-shadow'
+                  ? 'bg-white/50 backdrop-blur-sm text-muted-foreground opacity-50 cursor-not-allowed'
+                  : 'bg-white/78 backdrop-blur-sm text-foreground/75 hover:bg-white/95 hover:shadow-sm card-shadow'
               }
             `}
+            style={isActive ? {} : {
+              border: isLocked
+                ? "1px solid rgba(196,148,148,0.20)"
+                : "1px solid rgba(196,148,148,0.36)",
+            }}
           >
             {isLocked ? "🔒" : level.emoji} {level.title}
           </motion.button>
