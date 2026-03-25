@@ -11,7 +11,7 @@ const LevelSelector = ({ currentLevel, totalAnswered, onSelectLevel }: LevelSele
   return (
     <div className="flex gap-2 justify-center">
       {levels.map((level) => {
-        const isLocked = totalAnswered < level.unlockAt;
+        const isLocked = totalAnswered < level.unlockAt && currentLevel < level.id;
         const isActive = currentLevel === level.id;
 
         return (

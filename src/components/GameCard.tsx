@@ -9,7 +9,8 @@ interface GameCardProps {
   totalInLevel: number;
   onSkip: () => void;
   onFavorite: () => void;
-  onShare: () => void;
+  onBack?: () => void;
+  canGoBack?: boolean;
   direction: number;
   cardKey: string;
 }
@@ -23,7 +24,8 @@ const GameCard = ({
   totalInLevel,
   onSkip,
   onFavorite,
-  onShare,
+  onBack,
+  canGoBack = false,
   direction,
   cardKey,
 }: GameCardProps) => {
@@ -50,12 +52,6 @@ const GameCard = ({
       opacity: 0,
       rotateY: dir < 0 ? 15 : -15,
     }),
-  };
-
-  const shareToWhatsApp = () => {
-    const url = `https://wa.me/?text=${encodeURIComponent(`💛 שאלה מ"רובד":\n${text}`)}`;
-    window.open(url, '_blank');
-    onShare();
   };
 
   return (
@@ -125,32 +121,60 @@ const GameCard = ({
 
       {/* Action buttons */}
       <div className="flex items-center justify-center gap-6 mt-6">
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={onSkip}
-          className="w-14 h-14 rounded-full border-2 border-border bg-card flex items-center justify-center card-shadow hover:border-muted-foreground transition-colors"
-          aria-label="דלג"
-        >
-          <span className="text-xl">⏭️</span>
-        </motion.button>
+        <div className="relative group">
+          <motion.button
+            whileTap={canGoBack ? { scale: 0.9 } : undefined}
+            onClick={onBack}
+            disabled={!canGoBack}
+            className={`w-14 h-14 rounded-full border-2 flex items-center justify-center transition-colors ${
+              canGoBack
+                ? 'border-border bg-card card-shadow hover:border-muted-foreground cursor-pointer'
+                : 'border-border/30 bg-card/50 cursor-not-allowed opacity-40'
+            }`}
+            aria-label="חזור אחורה"
+          >
+            <span className="text-xl">⬅️</span>
+          </motion.button>
+          {canGoBack && (
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+              <span className="text-[10px] text-muted-foreground bg-background/90 px-2 py-1 rounded shadow-sm">
+                חזור אחורה
+              </span>
+            </div>
+          )}
+        </div>
 
-        <motion.button
-          whileTap={{ scale: 0.85 }}
-          onClick={onFavorite}
-          className="w-16 h-16 rounded-full bg-primary flex items-center justify-center card-shadow hover:opacity-90 transition-opacity"
-          aria-label="לב - שמור למועדפים"
-        >
-          <span className="text-2xl">❤️</span>
-        </motion.button>
+        <div className="relative group">
+          <motion.button
+            whileTap={{ scale: 0.85 }}
+            onClick={onFavorite}
+            className="w-16 h-16 rounded-full bg-primary flex items-center justify-center card-shadow hover:opacity-90 transition-opacity"
+            aria-label="עניתי על השאלה"
+          >
+            <span className="text-2xl">❤️</span>
+          </motion.button>
+          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+            <span className="text-[10px] text-muted-foreground bg-background/90 px-2 py-1 rounded shadow-sm">
+              עניתי - בונה את הבית
+            </span>
+          </div>
+        </div>
 
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={shareToWhatsApp}
-          className="w-14 h-14 rounded-full border-2 border-border bg-card flex items-center justify-center card-shadow hover:border-muted-foreground transition-colors"
-          aria-label="שתף לוואטסאפ"
-        >
-          <span className="text-xl">📤</span>
-        </motion.button>
+        <div className="relative group">
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={onSkip}
+            className="w-14 h-14 rounded-full border-2 border-border bg-card flex items-center justify-center card-shadow hover:border-muted-foreground transition-colors"
+            aria-label="דלג על השאלה"
+          >
+            <span className="text-xl">➡️</span>
+          </motion.button>
+          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+            <span className="text-[10px] text-muted-foreground bg-background/90 px-2 py-1 rounded shadow-sm">
+              דלג על השאלה
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
