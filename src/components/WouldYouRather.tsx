@@ -46,37 +46,37 @@ const WouldYouRather = ({ show, optionA, optionB, onPick, onSkip }: WouldYouRath
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="w-full max-w-sm mx-auto"
+          className="w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto"
         >
-          <div className="rounded-3xl overflow-hidden card-shadow" style={{ border: "1px solid rgba(196,148,148,0.32)" }}>
+          <div className="rounded-3xl overflow-hidden card-shadow glass-card">
             {/* Header */}
-            <div className="px-5 py-4 text-center" style={{ background: "rgba(255, 230, 228, 0.55)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderBottom: "1px solid rgba(196,148,148,0.22)" }}>
-              <p className="text-foreground text-sm font-bold tracking-wider">
+            <div className="px-5 md:px-6 py-4 md:py-5 text-center bg-gradient-to-r from-primary/10 to-secondary/10 backdrop-blur-md border-b border-border/30">
+              <p className="text-foreground text-sm md:text-base lg:text-lg font-bold tracking-wider">
                 🤔 מה הייתם מעדיפים?
               </p>
             </div>
 
             {/* Options */}
-            <div className="card-gradient">
+            <div className="bg-card/60 backdrop-blur-lg">
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handlePick("a")}
-                className={`w-full px-4 sm:px-6 py-5 sm:py-8 text-center border-b border-white/50 transition-all duration-300 min-h-[80px] sm:min-h-[100px] flex items-center justify-between gap-3 ${
+                className={`w-full px-4 sm:px-6 md:px-8 py-5 sm:py-8 md:py-10 text-center border-b border-border/60 transition-all duration-300 min-h-[80px] sm:min-h-[100px] md:min-h-[120px] flex items-center justify-between gap-3 ${
                   picked === "a"
-                    ? "bg-accent/10"
+                    ? "bg-primary/15"
                     : picked === "b"
                       ? "opacity-40"
-                      : "hover:bg-rose-50/60"
+                      : "hover:bg-card/40"
                 }`}
               >
-                <p className="text-base sm:text-lg font-bold text-foreground flex-1 text-right">{optionA}</p>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40 shrink-0">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-foreground flex-1 text-right">{optionA}</p>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40 shrink-0 md:w-5 md:h-5 lg:w-6 lg:h-6">
                   <path d="M9 5l7 7-7 7"/>
                 </svg>
               </motion.button>
 
               <div className="flex items-center justify-center -my-4 relative z-10">
-                <span className="bg-accent text-white text-xs font-extrabold w-10 h-10 rounded-full flex items-center justify-center shadow-md border-2 border-white/80 action-shadow">
+                <span className="bg-gradient-to-br from-primary to-accent text-foreground text-xs md:text-sm lg:text-base font-extrabold w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shadow-md border-2 border-card/90 action-shadow">
                   או
                 </span>
               </div>
@@ -84,26 +84,26 @@ const WouldYouRather = ({ show, optionA, optionB, onPick, onSkip }: WouldYouRath
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handlePick("b")}
-                className={`w-full px-4 sm:px-6 py-5 sm:py-8 text-center transition-all duration-300 min-h-[80px] sm:min-h-[100px] flex items-center justify-between gap-3 ${
+                className={`w-full px-4 sm:px-6 md:px-8 py-5 sm:py-8 md:py-10 text-center transition-all duration-300 min-h-[80px] sm:min-h-[100px] md:min-h-[120px] flex items-center justify-between gap-3 ${
                   picked === "b"
-                    ? "bg-accent/10"
+                    ? "bg-primary/15"
                     : picked === "a"
                       ? "opacity-40"
-                      : "hover:bg-rose-50/60"
+                      : "hover:bg-card/40"
                 }`}
               >
-                <p className="text-base sm:text-lg font-bold text-foreground flex-1 text-right">{optionB}</p>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40 shrink-0">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-foreground flex-1 text-right">{optionB}</p>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40 shrink-0 md:w-5 md:h-5 lg:w-6 lg:h-6">
                   <path d="M9 5l7 7-7 7"/>
                 </svg>
               </motion.button>
             </div>
 
             {/* Skip */}
-            <div className="px-5 py-3 text-center" style={{ background: "rgba(255,248,247,0.70)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderTop: "1px solid rgba(196,148,148,0.20)" }}>
+            <div className="px-5 md:px-6 py-3 md:py-4 text-center bg-card/50 backdrop-blur-md border-t border-border/30">
               <button
                 onClick={onSkip}
-                className="text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+                className="text-xs md:text-sm text-muted-foreground/60 hover:text-muted-foreground transition-colors"
               >
                 דלגו
               </button>

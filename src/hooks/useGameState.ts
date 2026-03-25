@@ -278,6 +278,20 @@ export const useGameState = () => {
     }));
   }, []);
 
+  const skipToNextLevel = useCallback(() => {
+    setState(prev => {
+      const nextLevelData = levels.find(l => l.id === prev.currentLevel + 1);
+      if (nextLevelData) {
+        return {
+          ...prev,
+          currentLevel: nextLevelData.id,
+          questionIndex: 0,
+        };
+      }
+      return prev;
+    });
+  }, []);
+
   const dismissSpecial = useCallback(() => {
     setShowSpecial(false);
   }, []);
@@ -342,6 +356,7 @@ export const useGameState = () => {
     goBack,
     canGoBack: state.history.length > 0,
     selectLevel,
+    skipToNextLevel,
     dismissSpecial,
     dismissLevelUp,
     handleWYRPick,

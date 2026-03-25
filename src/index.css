@@ -31,61 +31,89 @@
 
 @layer base {
   :root {
-    --background: 36 40% 98%;
-    --foreground: 240 15% 14%;
+    --background: 0 0% 100%;
+    --foreground: 220 15% 20%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 15% 14%;
+    --card: 0 0% 99%;
+    --card-foreground: 220 15% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 15% 14%;
+    --popover-foreground: 220 15% 20%;
 
-    --primary: 348 55% 62%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 45 100% 60%;
+    --primary-foreground: 220 15% 20%;
 
-    --secondary: 348 35% 96%;
-    --secondary-foreground: 348 40% 40%;
+    --secondary: 350 100% 88%;
+    --secondary-foreground: 350 60% 40%;
 
-    --muted: 36 25% 94%;
-    --muted-foreground: 240 8% 50%;
+    --muted: 0 0% 97%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 348 55% 62%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 48 100% 67%;
+    --accent-foreground: 220 15% 20%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 36 30% 88%;
-    --input: 36 30% 88%;
-    --ring: 348 55% 62%;
+    --border: 0 0% 92%;
+    --input: 0 0% 92%;
+    --ring: 45 100% 60%;
 
     --radius: 1rem;
 
     /* Design tokens */
-    --rose-gold: 348 55% 62%;
-    --rose-gold-light: 348 50% 78%;
-    --champagne: 38 68% 72%;
-    --champagne-light: 38 60% 84%;
-    --peach: 22 85% 74%;
-    --peach-light: 22 75% 84%;
+    --yellow-gold: 45 100% 60%;
+    --bright-gold: 48 100% 67%;
+    --soft-pink: 350 100% 88%;
+    --light-pink: 350 100% 92%;
 
-    /* Legacy aliases */
-    --gold: 348 55% 62%;
-    --gold-light: 38 68% 72%;
-    --gold-glow: 348 55% 65%;
-    --cream: 36 40% 98%;
-    --navy: 240 15% 14%;
-    --navy-light: 240 12% 30%;
-    --sky: 348 55% 62%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 10% 50%;
+    --sidebar-primary: 45 100% 60%;
+    --sidebar-primary-foreground: 220 15% 20%;
+    --sidebar-accent: 0 0% 97%;
+    --sidebar-accent-foreground: 220 10% 50%;
+    --sidebar-border: 0 0% 92%;
+    --sidebar-ring: 45 100% 60%;
+  }
 
-    --sidebar-background: 36 40% 98%;
-    --sidebar-foreground: 240 8% 40%;
-    --sidebar-primary: 348 55% 62%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 36 25% 94%;
-    --sidebar-accent-foreground: 240 8% 40%;
-    --sidebar-border: 36 30% 88%;
-    --sidebar-ring: 348 55% 62%;
+  .dark {
+    --background: 220 20% 12%;
+    --foreground: 0 0% 95%;
+
+    --card: 220 18% 15%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 220 18% 15%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 45 100% 55%;
+    --primary-foreground: 220 20% 12%;
+
+    --secondary: 350 80% 70%;
+    --secondary-foreground: 220 20% 12%;
+
+    --muted: 220 15% 20%;
+    --muted-foreground: 220 8% 60%;
+
+    --accent: 48 100% 60%;
+    --accent-foreground: 220 20% 12%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 25%;
+    --input: 220 15% 25%;
+    --ring: 45 100% 55%;
+
+    --sidebar-background: 220 20% 12%;
+    --sidebar-foreground: 220 8% 60%;
+    --sidebar-primary: 45 100% 55%;
+    --sidebar-primary-foreground: 220 20% 12%;
+    --sidebar-accent: 220 15% 20%;
+    --sidebar-accent-foreground: 220 8% 60%;
+    --sidebar-border: 220 15% 25%;
+    --sidebar-ring: 45 100% 55%;
   }
 }
 
@@ -103,8 +131,9 @@
     @apply text-foreground font-sans;
     font-family: 'Almoni', sans-serif;
     overflow-x: hidden;
-    background: hsl(36, 40%, 98%);
+    background: hsl(var(--background));
     min-height: 100vh;
+    transition: background-color 0.3s ease;
   }
 }
 
@@ -112,51 +141,68 @@
   .gold-shimmer {
     background: linear-gradient(
       135deg,
-      hsl(348, 55%, 60%) 0%,
-      hsl(38, 68%, 68%) 40%,
-      hsl(22, 85%, 70%) 70%,
-      hsl(348, 55%, 60%) 100%
+      hsl(45, 100%, 60%) 0%,
+      hsl(48, 100%, 67%) 40%,
+      hsl(350, 100%, 88%) 70%,
+      hsl(45, 100%, 60%) 100%
     );
     background-size: 200% 200%;
     animation: shimmer 3s ease-in-out infinite;
   }
 
   .gold-border {
-    border: 1px solid rgba(196, 148, 148, 0.48);
-    box-shadow: 0 0 36px hsla(348, 55%, 65%, 0.22), inset 0 0 24px rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.2), inset 0 0 30px rgba(255, 255, 255, 0.6);
   }
 
   .card-shadow {
-    box-shadow: 0 8px 40px hsla(348, 40%, 60%, 0.14), 0 2px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .glass-card {
+    background: hsl(var(--card) / 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.4);
+  }
+
+  .glass-card-special {
+    background: hsl(var(--card) / 0.80);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid hsl(var(--primary) / 0.3);
+    box-shadow: 0 8px 40px hsl(var(--primary) / 0.15);
   }
 
   .card-gradient {
-    background: rgba(255, 255, 255, 0.78);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .special-card-gradient {
-    background: rgba(255, 244, 245, 0.82);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    background: rgba(255, 250, 240, 0.80);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
   }
 
   .btn-primary-gradient {
-    background: linear-gradient(135deg, hsl(348, 55%, 58%) 0%, hsl(22, 85%, 68%) 45%, hsl(38, 68%, 65%) 75%, hsl(348, 55%, 58%) 100%);
+    background: linear-gradient(135deg, hsl(45, 100%, 60%) 0%, hsl(48, 100%, 67%) 50%, hsl(350, 100%, 85%) 100%);
     background-size: 200% 200%;
     animation: shimmer 4s ease-in-out infinite;
   }
 
   .action-shadow {
-    box-shadow: 0 8px 32px hsla(348, 55%, 62%, 0.42), 0 2px 10px hsla(348, 55%, 62%, 0.22);
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.35), 0 2px 10px rgba(255, 215, 0, 0.2);
   }
 
-  .metallic-border {
-    border: 1px solid;
-    border-image: linear-gradient(135deg, hsla(348,55%,72%,0.7), hsla(38,68%,78%,0.6), hsla(22,85%,76%,0.5)) 1;
-    border-radius: 1.5rem;
+  .glass-button {
+    background: hsl(var(--card) / 0.70);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
   }
+
 }
 
 @keyframes shimmer {

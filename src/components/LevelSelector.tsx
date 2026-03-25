@@ -9,7 +9,7 @@ interface LevelSelectorProps {
 
 const LevelSelector = ({ currentLevel, answeredPerLevel, onSelectLevel }: LevelSelectorProps) => {
   return (
-    <div className="flex gap-2 justify-center">
+    <div className="flex gap-2 md:gap-3 lg:gap-4 justify-center flex-wrap">
       {levels.map((level) => {
         const prevLevel = levels.find(pl => pl.id === level.id - 1);
         const isLocked = level.unlockPercent > 0 && prevLevel !== undefined &&
@@ -24,19 +24,14 @@ const LevelSelector = ({ currentLevel, answeredPerLevel, onSelectLevel }: LevelS
             onClick={() => !isLocked && onSelectLevel(level.id)}
             disabled={isLocked}
             className={`
-              px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-semibold transition-all
+              px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-full text-xs sm:text-sm md:text-base font-semibold transition-all
               ${isActive
-                ? 'bg-accent text-white shadow-md action-shadow'
+                ? 'btn-primary-gradient text-foreground shadow-md action-shadow'
                 : isLocked
-                  ? 'bg-white/50 backdrop-blur-sm text-muted-foreground opacity-50 cursor-not-allowed'
-                  : 'bg-white/78 backdrop-blur-sm text-foreground/75 hover:bg-white/95 hover:shadow-sm card-shadow'
+                  ? 'bg-card/40 backdrop-blur-sm text-muted-foreground opacity-50 cursor-not-allowed border border-border/25'
+                  : 'glass-button text-foreground/75 hover:bg-card/85 hover:shadow-sm card-shadow'
               }
             `}
-            style={isActive ? {} : {
-              border: isLocked
-                ? "1px solid rgba(196,148,148,0.20)"
-                : "1px solid rgba(196,148,148,0.36)",
-            }}
           >
             {isLocked ? "🔒" : level.emoji} {level.title}
           </motion.button>
