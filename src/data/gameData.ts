@@ -145,7 +145,7 @@ export const levels: Level[] = [
     id: 2,
     title: "שוברים את הקרח",
     emoji: "🧊",
-    unlockPercent: 35,
+    unlockPercent: 50,
     questions: [
       { id: 201, text: "מה הדבר שהכי הצחיק אותך לאחרונה?", type: 'open' },
       { id: 202, text: "מהי העבודה הכי הזויה שעבדת בה?", type: 'open' },
@@ -188,7 +188,7 @@ export const levels: Level[] = [
     id: 3,
     title: "צוללים לעומק",
     emoji: "💎",
-    unlockPercent: 35,
+    unlockPercent: 50,
     questions: [
       { id: 301, text: "איך את/ה רואה את הבית שלך בעתיד?", type: 'open' },
       { id: 302, text: "מה את/ה מחפש/ת בזוגיות?", type: 'open' },

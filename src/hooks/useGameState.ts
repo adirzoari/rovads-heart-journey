@@ -16,6 +16,7 @@ interface GameState {
   sparks: number;
   history: HistoryEntry[];
   answeredPerLevel: Record<number, number>;
+  specialIndex: number;
 }
 
 const STORAGE_KEY = "rovad_game_state";
@@ -34,6 +35,7 @@ const getInitialState = (): GameState => {
         sparks: parsed.sparks ?? 0,
         history: parsed.history ?? [],
         answeredPerLevel: parsed.answeredPerLevel ?? {},
+        specialIndex: parsed.specialIndex ?? 0,
       };
     }
   } catch {}
@@ -46,6 +48,7 @@ const getInitialState = (): GameState => {
     sparks: 0,
     history: [],
     answeredPerLevel: {},
+    specialIndex: 0,
   };
 };
 
@@ -73,7 +76,6 @@ export const useGameState = () => {
   const [state, setState] = useState<GameState>(getInitialState);
   const [direction, setDirection] = useState(1);
   const [showSpecial, setShowSpecial] = useState(false);
-  const [specialIndex, setSpecialIndex] = useState(0);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [unlockedLevel, setUnlockedLevel] = useState<number | null>(null);
   const [showWYR, setShowWYR] = useState(false);
@@ -85,7 +87,7 @@ export const useGameState = () => {
 
   const currentLevelData = levels.find(l => l.id === state.currentLevel) || levels[0];
   const currentQuestion = currentLevelData.questions[state.questionIndex];
-  const currentSpecialCard = specialCards[specialIndex % specialCards.length];
+  const currentSpecialCard = specialCards[state.specialIndex % specialCards.length];
 
   const triggerLevelUp = useCallback((levelId: number) => {
     setShowLevelUp(true);
@@ -119,13 +121,13 @@ export const useGameState = () => {
 
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
-        setSpecialIndex(i => i + 1);
         return {
           ...prev,
           totalAnswered: newTotalAnswered,
           globalCardCount: newGlobalCount,
           history: newHistory,
           answeredPerLevel: newAnsweredPerLevel,
+          specialIndex: prev.specialIndex + 1,
         };
       }
 
@@ -195,13 +197,13 @@ export const useGameState = () => {
 
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
-        setSpecialIndex(i => i + 1);
         return {
           ...prev,
           globalCardCount: newGlobalCount,
           questionIndex: nextIndex,
           currentLevel: nextLevel,
           history: newHistory,
+          specialIndex: prev.specialIndex + 1,
         };
       }
 
@@ -314,9 +316,9 @@ export const useGameState = () => {
       sparks: 0,
       history: [],
       answeredPerLevel: {},
+      specialIndex: 0,
     });
     setShowSpecial(false);
-    setSpecialIndex(0);
   }, []);
 
   const totalQuestions = levels.reduce((sum, l) => sum + l.questions.length, 0);
