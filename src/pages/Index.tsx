@@ -123,7 +123,15 @@ const Index = () => {
 
             {/* Card area */}
             <div className="flex-1 flex items-center">
-              {showSpecial && currentSpecialCard ? (
+              {showWYR ? (
+                <WouldYouRather
+                  show={true}
+                  optionA={wyrDilemma.a}
+                  optionB={wyrDilemma.b}
+                  onPick={handleWYRPick}
+                  onSkip={dismissWYR}
+                />
+              ) : showSpecial && currentSpecialCard ? (
                 <GameCard
                   key={`special-${currentSpecialCard.id}-${state.globalCardCount}`}
                   cardKey={`special-${currentSpecialCard.id}-${state.globalCardCount}`}
