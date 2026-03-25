@@ -5,6 +5,7 @@ import WouldYouRather from "@/components/WouldYouRather";
 import HouseProgress from "@/components/HouseProgress";
 import LevelSelector from "@/components/LevelSelector";
 import LevelUpModal from "@/components/LevelUpModal";
+import FavoritesModal from "@/components/FavoritesModal";
 import { useGameState } from "@/hooks/useGameState";
 
 const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
@@ -51,20 +52,23 @@ const WelcomeScreen = ({ onStart }: { onStart: () => void }) => (
   </motion.div>
 );
 
-const SparkCounter = ({ sparks }: { sparks: number }) => (
-  <motion.div
-    className="flex items-center gap-1.5 bg-secondary px-3 py-1.5 rounded-full"
+const SparkCounter = ({ sparks, onClick }: { sparks: number; onClick: () => void }) => (
+  <motion.button
+    onClick={onClick}
+    className="flex items-center gap-1.5 bg-secondary px-3 py-1.5 rounded-full hover:bg-secondary/80 transition-colors cursor-pointer"
     key={sparks}
     animate={sparks > 0 ? { scale: [1, 1.15, 1] } : undefined}
     transition={{ duration: 0.3 }}
+    whileTap={{ scale: 0.95 }}
   >
     <span className="text-sm">✨</span>
     <span className="text-xs font-bold text-foreground">{sparks}</span>
-  </motion.div>
+  </motion.button>
 );
 
 const Index = () => {
   const [started, setStarted] = useState(false);
+  const [showFavorites, setShowFavorites] = useState(false);
   const {
     currentQuestion,
     currentLevelData,
@@ -79,6 +83,8 @@ const Index = () => {
     houseProgress,
     skip,
     favorite,
+    goBack,
+    canGoBack,
     selectLevel,
     dismissLevelUp,
     handleWYRPick,
@@ -102,7 +108,7 @@ const Index = () => {
             <div className="flex items-start justify-between mb-4">
               <HouseProgress progress={houseProgress} />
               <div className="flex flex-col items-end gap-2 mt-1">
-                <SparkCounter sparks={state.sparks} />
+                <SparkCounter sparks={state.sparks} onClick={() => setShowFavorites(true)} />
                 <button
                   onClick={resetGame}
                   className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
@@ -143,7 +149,8 @@ const Index = () => {
                   totalInLevel={0}
                   onSkip={skip}
                   onFavorite={favorite}
-                  onShare={() => {}}
+                  onBack={goBack}
+                  canGoBack={canGoBack}
                   direction={direction}
                 />
               ) : currentQuestion ? (
@@ -158,7 +165,8 @@ const Index = () => {
                   totalInLevel={currentLevelData.questions.length}
                   onSkip={skip}
                   onFavorite={favorite}
-                  onShare={() => {}}
+                  onBack={goBack}
+                  canGoBack={canGoBack}
                   direction={direction}
                 />
               ) : null}
@@ -168,6 +176,9 @@ const Index = () => {
             <div className="text-center py-4">
               <p className="text-[10px] text-muted-foreground">
                 {state.totalAnswered} שאלות נענו • {state.favorites.length} שמורות • ✨ {state.sparks} ניצוצות
+              </p>
+              <p className="text-[10px] text-muted-foreground/60 mt-2">
+                Developed by Adir Zoari • פותח על ידי אדיר זוארי
               </p>
             </div>
           </motion.div>
@@ -179,6 +190,13 @@ const Index = () => {
         show={showLevelUp}
         levelId={unlockedLevel}
         onDismiss={dismissLevelUp}
+      />
+
+      {/* Favorites modal */}
+      <FavoritesModal
+        show={showFavorites}
+        favoriteIds={state.favorites}
+        onDismiss={() => setShowFavorites(false)}
       />
     </div>
   );

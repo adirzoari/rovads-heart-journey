@@ -2,13 +2,19 @@ import { useState, useCallback, useEffect } from "react";
 import { levels, specialCards } from "@/data/gameData";
 import { getRandomDilemma } from "@/components/WouldYouRather";
 
+interface HistoryEntry {
+  level: number;
+  questionIndex: number;
+}
+
 interface GameState {
   currentLevel: number;
   questionIndex: number;
   totalAnswered: number;
   favorites: number[];
   globalCardCount: number;
-  sparks: number; // new spark/chemistry counter
+  sparks: number;
+  history: HistoryEntry[];
 }
 
 const STORAGE_KEY = "rovad_game_state";
@@ -25,6 +31,7 @@ const getInitialState = (): GameState => {
         favorites: parsed.favorites ?? [],
         globalCardCount: parsed.globalCardCount ?? 0,
         sparks: parsed.sparks ?? 0,
+        history: parsed.history ?? [],
       };
     }
   } catch {}
@@ -35,7 +42,28 @@ const getInitialState = (): GameState => {
     favorites: [],
     globalCardCount: 0,
     sparks: 0,
+    history: [],
   };
+};
+
+const getNextPosition = (currentLevel: number, questionIndex: number) => {
+  const level = levels.find(l => l.id === currentLevel) || levels[0];
+  let nextIndex = questionIndex + 1;
+  let nextLevel = currentLevel;
+  let levelCompleted = false;
+
+  if (nextIndex >= level.questions.length) {
+    const nextLevelData = levels.find(l => l.id === currentLevel + 1);
+    if (nextLevelData) {
+      nextLevel = nextLevelData.id;
+      nextIndex = 0;
+      levelCompleted = true;
+    } else {
+      nextIndex = 0;
+    }
+  }
+
+  return { nextIndex, nextLevel, levelCompleted };
 };
 
 export const useGameState = () => {
@@ -56,48 +84,62 @@ export const useGameState = () => {
   const currentQuestion = currentLevelData.questions[state.questionIndex];
   const currentSpecialCard = specialCards[specialIndex % specialCards.length];
 
+  const triggerLevelUp = useCallback((levelId: number) => {
+    setShowLevelUp(true);
+    setUnlockedLevel(levelId);
+  }, []);
+
+  const applyNextPosition = useCallback((prev: GameState): Partial<GameState> => {
+    const { nextIndex, nextLevel, levelCompleted } = getNextPosition(prev.currentLevel, prev.questionIndex);
+    if (levelCompleted) {
+      triggerLevelUp(nextLevel);
+    }
+    return { questionIndex: nextIndex, currentLevel: nextLevel };
+  }, [triggerLevelUp]);
+
+  const pushHistory = (prev: GameState): HistoryEntry[] => [
+    ...prev.history,
+    { level: prev.currentLevel, questionIndex: prev.questionIndex },
+  ];
+
   const advance = useCallback(() => {
     setDirection(1);
 
     setState(prev => {
+      const newHistory = pushHistory(prev);
       const newGlobalCount = prev.globalCardCount + 1;
       const newTotalAnswered = prev.totalAnswered + 1;
 
-      // Check if next card should be special (every 7)
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
         setSpecialIndex(i => i + 1);
-        return { ...prev, totalAnswered: newTotalAnswered, globalCardCount: newGlobalCount };
+        return {
+          ...prev,
+          totalAnswered: newTotalAnswered,
+          globalCardCount: newGlobalCount,
+          history: newHistory,
+        };
       }
 
-      // Check if "would you rather" (every 12)
       if (newGlobalCount % 12 === 0) {
         setWyrDilemma(getRandomDilemma());
         setShowWYR(true);
-        return { ...prev, totalAnswered: newTotalAnswered, globalCardCount: newGlobalCount };
+        return {
+          ...prev,
+          totalAnswered: newTotalAnswered,
+          globalCardCount: newGlobalCount,
+          history: newHistory,
+        };
       }
 
-      const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
-      let nextIndex = prev.questionIndex + 1;
-      let nextLevel = prev.currentLevel;
-
-      if (nextIndex >= level.questions.length) {
-        const nextLevelData = levels.find(l => l.id === prev.currentLevel + 1);
-        if (nextLevelData && newTotalAnswered >= nextLevelData.unlockAt) {
-          nextLevel = nextLevelData.id;
-          nextIndex = 0;
-          setShowLevelUp(true);
-          setUnlockedLevel(nextLevelData.id);
-        } else {
-          nextIndex = 0;
-        }
+      const { nextIndex, nextLevel, levelCompleted } = getNextPosition(prev.currentLevel, prev.questionIndex);
+      if (levelCompleted) {
+        triggerLevelUp(nextLevel);
       }
 
-      // Check if a new level just got unlocked (even if we don't auto-switch)
       for (const l of levels) {
-        if (l.unlockAt === newTotalAnswered && l.id > prev.currentLevel) {
-          setShowLevelUp(true);
-          setUnlockedLevel(l.id);
+        if (l.unlockAt === newTotalAnswered && l.id > nextLevel) {
+          triggerLevelUp(l.id);
         }
       }
 
@@ -107,9 +149,10 @@ export const useGameState = () => {
         currentLevel: nextLevel,
         totalAnswered: newTotalAnswered,
         globalCardCount: newGlobalCount,
+        history: newHistory,
       };
     });
-  }, []);
+  }, [triggerLevelUp]);
 
   const skip = useCallback(() => {
     setDirection(-1);
@@ -117,50 +160,63 @@ export const useGameState = () => {
       setShowSpecial(false);
       setShowWYR(false);
       setState(prev => {
-        const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
-        let nextIndex = prev.questionIndex + 1;
-        if (nextIndex >= level.questions.length) nextIndex = 0;
-        return { ...prev, questionIndex: nextIndex };
+        const newHistory = pushHistory(prev);
+        const next = applyNextPosition(prev);
+        return { ...prev, ...next, history: newHistory };
       });
       return;
     }
     setState(prev => {
+      const newHistory = pushHistory(prev);
       const newGlobalCount = prev.globalCardCount + 1;
-      const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
-      let nextIndex = prev.questionIndex + 1;
-      if (nextIndex >= level.questions.length) nextIndex = 0;
 
-      // Check if next card should be special (every 7)
+      const { nextIndex, nextLevel, levelCompleted } = getNextPosition(prev.currentLevel, prev.questionIndex);
+      if (levelCompleted) {
+        triggerLevelUp(nextLevel);
+      }
+
       if (newGlobalCount % 7 === 0) {
         setShowSpecial(true);
         setSpecialIndex(i => i + 1);
-        return { ...prev, globalCardCount: newGlobalCount };
+        return {
+          ...prev,
+          globalCardCount: newGlobalCount,
+          questionIndex: nextIndex,
+          currentLevel: nextLevel,
+          history: newHistory,
+        };
       }
 
-      // Check for WYR (every 12, but not on 7 multiples)
       if (newGlobalCount % 12 === 0) {
         setWyrDilemma(getRandomDilemma());
         setShowWYR(true);
-        return { ...prev, globalCardCount: newGlobalCount };
+        return {
+          ...prev,
+          globalCardCount: newGlobalCount,
+          questionIndex: nextIndex,
+          currentLevel: nextLevel,
+          history: newHistory,
+        };
       }
 
-      return { ...prev, questionIndex: nextIndex, globalCardCount: newGlobalCount };
+      return {
+        ...prev,
+        questionIndex: nextIndex,
+        currentLevel: nextLevel,
+        globalCardCount: newGlobalCount,
+        history: newHistory,
+      };
     });
-  }, [showSpecial, showWYR]);
+  }, [showSpecial, showWYR, triggerLevelUp, applyNextPosition]);
 
   const favorite = useCallback(() => {
     if (showSpecial) {
       setShowSpecial(false);
-      setState(prev => ({ ...prev, sparks: prev.sparks + 1 }));
-      // After dismissing special, advance to next question
-      setTimeout(() => {
-        setState(prev => {
-          const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
-          let nextIndex = prev.questionIndex + 1;
-          if (nextIndex >= level.questions.length) nextIndex = 0;
-          return { ...prev, questionIndex: nextIndex };
-        });
-      }, 100);
+      setState(prev => {
+        const newHistory = pushHistory(prev);
+        const next = applyNextPosition(prev);
+        return { ...prev, ...next, sparks: prev.sparks + 1, history: newHistory };
+      });
       return;
     }
     if (currentQuestion) {
@@ -171,7 +227,28 @@ export const useGameState = () => {
       }));
     }
     advance();
-  }, [advance, currentQuestion, showSpecial]);
+  }, [advance, currentQuestion, showSpecial, applyNextPosition]);
+
+  const goBack = useCallback(() => {
+    if (state.history.length === 0) return;
+
+    setDirection(-1);
+    setShowSpecial(false);
+    setShowWYR(false);
+
+    setState(prev => {
+      const newHistory = [...prev.history];
+      const previousState = newHistory.pop();
+      if (!previousState) return prev;
+
+      return {
+        ...prev,
+        currentLevel: previousState.level,
+        questionIndex: previousState.questionIndex,
+        history: newHistory,
+      };
+    });
+  }, [state.history.length]);
 
   const selectLevel = useCallback((levelId: number) => {
     setState(prev => ({
@@ -187,30 +264,21 @@ export const useGameState = () => {
 
   const handleWYRPick = useCallback(() => {
     setShowWYR(false);
-    setState(prev => ({
-      ...prev,
-      sparks: prev.sparks + 1,
-    }));
-    // advance to next question
-    setTimeout(() => {
-      setState(prev => {
-        const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
-        let nextIndex = prev.questionIndex + 1;
-        if (nextIndex >= level.questions.length) nextIndex = 0;
-        return { ...prev, questionIndex: nextIndex };
-      });
-    }, 100);
-  }, []);
+    setState(prev => {
+      const newHistory = pushHistory(prev);
+      const next = applyNextPosition(prev);
+      return { ...prev, ...next, sparks: prev.sparks + 1, history: newHistory };
+    });
+  }, [applyNextPosition]);
 
   const dismissWYR = useCallback(() => {
     setShowWYR(false);
     setState(prev => {
-      const level = levels.find(l => l.id === prev.currentLevel) || levels[0];
-      let nextIndex = prev.questionIndex + 1;
-      if (nextIndex >= level.questions.length) nextIndex = 0;
-      return { ...prev, questionIndex: nextIndex };
+      const newHistory = pushHistory(prev);
+      const next = applyNextPosition(prev);
+      return { ...prev, ...next, history: newHistory };
     });
-  }, []);
+  }, [applyNextPosition]);
 
   const dismissLevelUp = useCallback(() => {
     setShowLevelUp(false);
@@ -226,6 +294,7 @@ export const useGameState = () => {
       favorites: [],
       globalCardCount: 0,
       sparks: 0,
+      history: [],
     });
     setShowSpecial(false);
     setSpecialIndex(0);
@@ -249,6 +318,8 @@ export const useGameState = () => {
     advance,
     skip,
     favorite,
+    goBack,
+    canGoBack: state.history.length > 0,
     selectLevel,
     dismissSpecial,
     dismissLevelUp,
